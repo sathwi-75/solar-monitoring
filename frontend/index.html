@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <script src="js/app.js"></script>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Plant Monitoring System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header content here -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-solar-panel"></i>
+                    <h1>SolarGuard</h1>
+                </div>
+                <div class="plant-info">
+                    <div class="plant-selector">
+                        <label for="current-plant">Current Plant:</label>
+                        <select id="current-plant">
+                            <!-- Plant options will be populated here -->
+                        </select>
+                    </div>
+                    <div class="plant-name" id="plant-name">Plant 1</div>
+                    <div class="plant-location" id="plant-location">Chennai, India</div>
+                    <div class="datetime" id="datetime"></div>
+                    <div class="status-indicator">
+                        <i class="fas fa-circle status-healthy" id="status-icon"></i>
+                        <span id="status-text">Healthy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation content here -->
+    <nav>
+        <div class="container">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="fault-detection">
+                        <i class="fas fa-exclamation-triangle"></i> Fault Detection
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="analytics">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="maintenance">
+                        <i class="fas fa-tools"></i> Maintenance & Alerts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="settings">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main content sections here -->
+    <main>
+        <div class="container">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2 class="section-title">Solar Plant Dashboard</h2>
+                    <p class="section-subtitle">Real-time monitoring of plant performance</p>
+                </div>
+
+                <!-- Control Panel -->
+                <div class="control-panel">
+                    <div class="control-info">
+                        <span class="status-badge status-inactive" id="monitoring-status">
+                            <i class="fas fa-circle"></i> Monitoring Inactive
+                        </span>
+                        <span id="last-update">Last update: Never</span>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" id="start-monitoring">Start Monitoring</button>
+                        <button class="btn btn-secondary" id="stop-monitoring" style="display: none;">Stop Monitoring</button>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="dashboard-empty">
+                    <i class="fas fa-solar-panel empty-icon"></i>
+                    <h3 class="empty-title">No Data Available</h3>
+                    <p class="empty-subtitle">Start monitoring to see real-time data from your solar plant. Click "Start Monitoring" to begin.</p>
+                    <button class="btn btn-primary" id="start-monitoring-empty">Start Monitoring</button>
+                </div>
+
+                <!-- Dashboard Content (Initially Hidden) -->
+                <div id="dashboard-content" style="display: none;">
+                    <div class="dashboard-grid">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">AC Power</div>
+                                <div class="metric-icon" style="background-color: #4285F4;">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="ac-power">-- kW</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-up"></i> --% from yesterday
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">DC Power</div>
+                                <div class="metric-icon" style="background-color: #34A853;">
+                                    <i class="fas fa-solar-panel"></i>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="dc-power">-- kW</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-up"></i> --% from yesterday
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">Performance Ratio</div>
+                                <div class="metric-icon" style="background-color: #FBBC05;">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="pr-value">--%</div>
+                            <div class="metric-change negative">
+                                <i class="fas fa-arrow-down"></i> --% from yesterday
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">Daily Yield</div>
+                                <div class="metric-icon" style="background-color: #EA4335;">
+                                    <i class="fas fa-battery-three-quarters"></i>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="daily-yield">-- kWh</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-up"></i> --% from yesterday
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">Soiling Index</div>
+                                <div class="metric-icon" style="background-color: #9C27B0;">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="soiling-index">--%</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-down"></i> --% improvement
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">Irradiance</div>
+                                <div class="metric-icon" style="background-color: #FF9800;">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="irradiance">-- W/m²</div>
+                            <div class="metric-change positive">
+                                <i class="fas fa-arrow-up"></i> --% from yesterday
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Power Generation (Actual vs Expected)</h3>
+                            <div class="chart-controls">
+                                <button class="btn btn-primary" id="refresh-chart">Refresh</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="power-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Performance Ratio Gauge</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="pr-gauge"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fault Detection Section -->
+            <section id="fault-detection" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Fault Detection</h2>
+                    <p class="section-subtitle">Upload data for AI-powered fault analysis</p>
+                </div>
+
+                <div class="upload-section">
+                    <div class="upload-area" id="upload-area">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <div class="upload-text">Drag & drop your CSV file here</div>
+                        <div class="upload-subtext">or click to browse files</div>
+                        <input type="file" id="file-input" class="file-input" accept=".csv">
+                    </div>
+                </div>
+
+                <div class="results-table" id="results-container" style="display: none;">
+                    <div class="table-header">Fault Detection Results</div>
+                    <div class="table-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Inverter ID</th>
+                                    <th>Detected Issue</th>
+                                    <th>Severity</th>
+                                    <th>Suggested Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-tbody">
+                                <!-- Results will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Performance Analytics</h2>
+                    <p class="section-subtitle">Historical data analysis and trends</p>
+                </div>
+
+                <div class="analytics-controls">
+                    <div class="control-group">
+                        <label class="control-label">Date Range</label>
+                        <select class="control-input" id="date-range">
+                            <option value="7">Last 7 days</option>
+                            <option value="30" selected>Last 30 days</option>
+                            <option value="90">Last 90 days</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Plants to Compare</label>
+                        <select class="control-input" id="plant-select" multiple>
+                            <!-- Plant options will be populated here -->
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Metric</label>
+                        <select class="control-input" id="metric-select">
+                            <option value="energy">Energy Generation</option>
+                            <option value="efficiency">Efficiency</option>
+                            <option value="pr">Performance Ratio</option>
+                            <option value="temperature">Temperature Correlation</option>
+                            <option value="irradiation">Irradiation Correlation</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="apply-filters">Apply Filters</button>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Daily Energy Generation Comparison</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="energy-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Efficiency Analysis</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="efficiency-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Performance Ratio Comparison</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="pr-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Temperature vs AC Power</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="temp-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Irradiation vs AC Power</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="irradiation-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Maintenance & Alerts Section -->
+            <section id="maintenance" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Maintenance & Alerts</h2>
+                    <p class="section-subtitle">Track maintenance activities and system alerts</p>
+                </div>
+
+                <div class="maintenance-grid">
+                    <div class="maintenance-card">
+                        <div class="maintenance-header">
+                            <h3 class="maintenance-title">Cleaning Schedule</h3>
+                        </div>
+                        <ul class="maintenance-list">
+                            <li class="maintenance-item">
+                                <div>
+                                    <div>Last Cleaning</div>
+                                    <div class="maintenance-date">15 May 2023, 10:30 AM</div>
+                                </div>
+                                <div class="maintenance-status">
+                                    <span class="status-icon status-completed"></span>
+                                    <span>Completed</span>
+                                </div>
+                            </li>
+                            <li class="maintenance-item">
+                                <div>
+                                    <div>Next Scheduled Cleaning</div>
+                                    <div class="maintenance-date">15 June 2023, 10:00 AM</div>
+                                </div>
+                                <div class="maintenance-status">
+                                    <span class="status-icon status-pending"></span>
+                                    <span>Pending</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="maintenance-card">
+                        <div class="maintenance-header">
+                            <h3 class="maintenance-title">Recent Maintenance</h3>
+                        </div>
+                        <ul class="maintenance-list">
+                            <li class="maintenance-item">
+                                <div>
+                                    <div>Inverter 3 Repair</div>
+                                    <div class="maintenance-date">10 May 2023, 2:15 PM</div>
+                                </div>
+                                <div class="maintenance-status">
+                                    <span class="status-icon status-completed"></span>
+                                    <span>Completed</span>
+                                </div>
+                            </li>
+                            <li class="maintenance-item">
+                                <div>
+                                    <div>String 2 Inspection</div>
+                                    <div class="maintenance-date">5 May 2023, 11:45 AM</div>
+                                </div>
+                                <div class="maintenance-status">
+                                    <span class="status-icon status-completed"></span>
+                                    <span>Completed</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="maintenance-card">
+                        <div class="maintenance-header">
+                            <h3 class="maintenance-title">Upcoming Tasks</h3>
+                        </div>
+                        <ul class="maintenance-list">
+                            <li class="maintenance-item">
+                                <div>
+                                    <div>MPPT Unit Check</div>
+                                    <div class="maintenance-date">20 May 2023, 9:00 AM</div>
+                                </div>
+                                <div class="maintenance-status">
+                                    <span class="status-icon status-pending"></span>
+                                    <span>Pending</span>
+                                </div>
+                            </li>
+                            <li class="maintenance-item">
+                                <div>
+                                    <div>Wiring Inspection</div>
+                                    <div class="maintenance-date">25 May 2023, 10:30 AM</div>
+                                </div>
+                                <div class="maintenance-status">
+                                    <span class="status-icon status-pending"></span>
+                                    <span>Pending</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert-table">
+                    <div class="table-header">System Alerts</div>
+                    <div class="table-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Alert Message</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alerts-tbody">
+                                <tr>
+                                    <td>12 May 2023, 3:45 PM</td>
+                                    <td>Soiling suspected on String 2 (PR drop 12%)</td>
+                                    <td><span class="severity-badge severity-warning"><i class="fas fa-exclamation-circle"></i> Warning</span></td>
+                                    <td>Active</td>
+                                </tr>
+                                <tr>
+                                    <td>10 May 2023, 11:20 AM</td>
+                                    <td>Inverter 3 anomaly detected (-500 W residual)</td>
+                                    <td><span class="severity-badge severity-fault"><i class="fas fa-times-circle"></i> Fault</span></td>
+                                    <td>Resolved</td>
+                                </tr>
+                                <tr>
+                                    <td>8 May 2023, 2:15 PM</td>
+                                    <td>Performance ratio below threshold (68%)</td>
+                                    <td><span class="severity-badge severity-warning"><i class="fas fa-exclamation-circle"></i> Warning</span></td>
+                                    <td>Resolved</td>
+                                </tr>
+                                <tr>
+                                    <td>5 May 2023, 9:30 AM</td>
+                                    <td>Shading detected on Panel Array B</td>
+                                    <td><span class="severity-badge severity-warning"><i class="fas fa-exclamation-circle"></i> Warning</span></td>
+                                    <td>Resolved</td>
+                                </tr>
+                                <tr>
+                                    <td>1 May 2023, 4:20 PM</td>
+                                    <td>Grid connection instability detected</td>
+                                    <td><span class="severity-badge severity-fault"><i class="fas fa-times-circle"></i> Fault</span></td>
+                                    <td>Resolved</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Maintenance Impact on Performance</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="maintenance-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="section">
+                <div class="section-header">
+                    <h2 class="section-title">System Settings</h2>
+                    <p class="section-subtitle">Configure monitoring parameters and preferences</p>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3 class="settings-title">Data Settings</h3>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label class="form-label">Data Refresh Rate (seconds)</label>
+                                <input type="number" class="form-input" id="refresh-rate" value="5" min="1" max="60">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fault Detection Sensitivity</label>
+                                <select class="form-select" id="sensitivity">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Historical Data Retention (days)</label>
+                                <input type="number" class="form-input" id="retention" value="365" min="30" max="1095">
+                            </div>
+                            <button type="button" class="btn btn-primary btn-save">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3 class="settings-title">Cloud Connection</h3>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label class="form-label">Cloud Service</label>
+                                <select class="form-select" id="cloud-service">
+                                    <option value="thingspeak">ThingSpeak</option>
+                                    <option value="firebase">Firebase</option>
+                                    <option value="aws">AWS IoT</option>
+                                    <option value="none">None</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">API Key</label>
+                                <input type="password" class="form-input" id="api-key" placeholder="Enter API key">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Channel ID</label>
+                                <input type="text" class="form-input" id="channel-id" placeholder="Enter channel ID">
+                            </div>
+                            <button type="button" class="btn btn-primary btn-save">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3 class="settings-title">Alert Preferences</h3>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <div class="form-switch">
+                                    <label class="form-label">Email Notifications</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="email-alerts" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-switch">
+                                    <label class="form-label">SMS Notifications</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="sms-alerts">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-switch">
+                                    <label class="form-label">Push Notifications</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="push-alerts" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Alert Thresholds</label>
+                                <select class="form-select" id="alert-threshold">
+                                    <option value="low">Low (5% deviation)</option>
+                                    <option value="medium" selected>Medium (10% deviation)</option>
+                                    <option value="high">High (15% deviation)</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-save">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3 class="settings-title">Plant Management</h3>
+                        <div>
+                            <button class="btn btn-primary" id="add-plant-btn">Add New Plant</button>
+                        </div>
+                        <div class="plant-list" id="plant-list">
+                            <!-- Plant items will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Add Plant Modal -->
+    <div class="modal" id="add-plant-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Plant</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-plant-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Plant Name</label>
+                            <input type="text" class="form-input" id="new-plant-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-input" id="new-plant-location" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Capacity (kW)</label>
+                            <input type="number" class="form-input" id="new-plant-capacity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of Inverters</label>
+                            <input type="number" class="form-input" id="new-plant-inverters" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Latitude</label>
+                        <input type="text" class="form-input" id="new-plant-lat" placeholder="e.g., 13.0827" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Longitude</label>
+                        <input type="text" class="form-input" id="new-plant-lon" placeholder="e.g., 80.2707" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-add-plant">Cancel</button>
+                <button class="btn btn-primary" id="confirm-add-plant">Add Plant</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Plant Modal -->
+    <div class="modal" id="edit-plant-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Plant</h3>
+                <button class="modal-close" id="close-edit-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-plant-form">
+                    <input type="hidden" id="edit-plant-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Plant Name</label>
+                            <input type="text" class="form-input" id="edit-plant-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-input" id="edit-plant-location" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Capacity (kW)</label>
+                            <input type="number" class="form-input" id="edit-plant-capacity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of Inverters</label>
+                            <input type="number" class="form-input" id="edit-plant-inverters" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Latitude</label>
+                        <input type="text" class="form-input" id="edit-plant-lat" placeholder="e.g., 13.0827" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Longitude</label>
+                        <input type="text" class="form-input" id="edit-plant-lon" placeholder="e.g., 80.2707" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-edit-plant">Cancel</button>
+                <button class="btn btn-primary" id="confirm-edit-plant">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Panel -->
+    <div class="alert-panel" id="alert-panel">
+        <!-- Alerts will be dynamically added here -->
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
+</body>
+</html>
